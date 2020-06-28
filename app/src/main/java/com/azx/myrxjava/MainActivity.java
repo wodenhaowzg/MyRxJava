@@ -15,8 +15,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        FlowableTest flowableTest = new FlowableTest();
-        // 测试背压策略
-        flowableTest.startFlowableTest2();
+//        FlowableTest flowableTest = new FlowableTest();
+//        // 测试背压策略
+//        flowableTest.startTest();
+
+//        WatchTest watchTest = new WatchTest();
+//        watchTest.startTest();
+        OperatorDoTest operatorDoTest = new OperatorDoTest();
+        operatorDoTest.startTest();
     }
 }
