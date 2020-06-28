@@ -1,4 +1,4 @@
-package com.azx.myrxjava;
+package com.azx.myrxjava.test;
 
 import android.util.Log;
 
@@ -9,17 +9,12 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
 import io.reactivex.FlowableOnSubscribe;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.internal.operators.flowable.FlowableBuffer;
-import io.reactivex.internal.operators.flowable.FlowableCreate;
 import io.reactivex.schedulers.Schedulers;
 
 class WatchTest implements BaseTest {
 
-    private static final String TAG = "BackpressureTest";
+    private static final String TAG = "WatchTest";
 
     @Override
     public void startTest() {

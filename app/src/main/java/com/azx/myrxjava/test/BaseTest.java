@@ -1,4 +1,4 @@
-package com.azx.myrxjava;
+package com.azx.myrxjava.test;
 
 interface BaseTest {
 

@@ -1,6 +1,9 @@
-package com.azx.myrxjava;
+package com.azx.myrxjava.ui;
 
 import android.os.Bundle;
+
+import com.azx.myrxjava.test.FlowableTest;
+import com.azx.myrxjava.R;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,13 +18,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-//        FlowableTest flowableTest = new FlowableTest();
-//        // 测试背压策略
-//        flowableTest.startTest();
+        FlowableTest flowableTest = new FlowableTest();
+        flowableTest.startTest();
 
 //        WatchTest watchTest = new WatchTest();
 //        watchTest.startTest();
-        OperatorDoTest operatorDoTest = new OperatorDoTest();
-        operatorDoTest.startTest();
+//        OperatorDoTest operatorDoTest = new OperatorDoTest();
+//        operatorDoTest.startTest();
     }
 }

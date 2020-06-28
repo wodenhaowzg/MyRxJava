@@ -1,73 +1,58 @@
-package com.azx.myrxjava;
+package com.azx.myrxjava.test;
 
 import android.util.Log;
 
+import com.azx.myrxjava.ConsumerImpl;
+import com.azx.myrxjava.ObserverImpl;
 import com.azx.myrxjava.bean.News;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
-import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
-import io.reactivex.functions.Function3;
-import io.reactivex.functions.Function4;
-import io.reactivex.internal.operators.observable.ObservableFlatMapSingle;
-import io.reactivex.plugins.RxJavaPlugins;
+import io.reactivex.schedulers.Schedulers;
 
-class OperatorDoTest implements BaseTest {
+public class OperatorDoTest implements BaseTest {
 
     private static final String TAG = "OperatorDoTest";
-    private LocalObserver mLocalObserver = new LocalObserver();
+    private ObserverImpl mObserverImpl = new ObserverImpl();
+    private ConsumerImpl<Object> mConsumerImpl = new ConsumerImpl<>();
     private List<News> mNews;
 
     @Override
     public void startTest() {
-//        Observable<String> stringObservable = Observable.just("").doOnNext(new Consumer<String>() {
-//            @Override
-//            public void accept(String s) throws Exception {
-//                Log.d(TAG,"发送事件: " + s);
-//            }
-//        });
-//        stringObservable.subscribe(new Consumer<String>() {
-//            @Override
-//            public void accept(String s) throws Exception {
-//                Log.d(TAG,"接收事件: " + s);
-//            }
-//        });
-
         mNews = createNews();
 //        createOperator();
-        transformOperator();
+//        transformOperator();
+        polymerizationOperator();
+        otherOperator();
     }
 
-    private void transformOperator() {
-
-        // flatMap 将集合拆分为一个一个的 Observable 并发送
-        Observable.just(mNews).flatMap(new Function<List<News>, ObservableSource<News>>() {
+    private void otherOperator() {
+        Observable.interval(1, TimeUnit.SECONDS).observeOn(Schedulers.io()).subscribe(new Consumer<Long>() {
             @Override
-            public ObservableSource<News> apply(List<News> news) throws Exception {
-                return Observable.fromIterable(news);
-            }
-        }).subscribe(mLocalObserver);
+            public void accept(Long aLong) throws Exception {
 
-        // map 仅在发送事件前支持一个函数进行前处理
-        Observable.just(mNews).map(new Function<List<News>, ObservableSource<News>>() {
-            @Override
-            public ObservableSource<News> apply(List<News> news) throws Exception {
-                return Observable.fromIterable(news);
             }
-        }).subscribe(mLocalObserver);
+        });
+    }
+
+    private void polymerizationOperator() {
+        // concat 将多个 Observable 按顺序连接起来
+        Observable<String> first = Observable.just("first");
+        Observable<String> second = Observable.just("second");
+        Observable<String> concat = Observable.concat(first, second);
+        Disposable subscribe = concat.subscribe(new Consumer<String>() {//相当于onNext
+            @Override
+            public void accept(String s) throws Exception {
+                Log.d(TAG, "concat accept : " + s);
+            }
+        });
     }
 
     private List<News> createNews() {
@@ -79,6 +64,25 @@ class OperatorDoTest implements BaseTest {
         temp.add(new News(startTime + 3000, "ddd", "d_author"));
         temp.add(new News(startTime + 4000, "eee", "e_author"));
         return temp;
+    }
+
+    private void transformOperator() {
+        // flatMap 将集合拆分为一个一个的 Observable 并发送
+        Observable.just(mNews).flatMap(new Function<List<News>, ObservableSource<News>>() {
+            @Override
+            public ObservableSource<News> apply(List<News> news) throws Exception {
+                return Observable.fromIterable(news);
+            }
+        }).subscribe(mObserverImpl);
+
+        // map 仅在发送事件前支持一个函数进行前处理
+        Observable.just(mNews).map(new Function<List<News>, ObservableSource<News>>() {
+            @Override
+            public ObservableSource<News> apply(List<News> news) throws Exception {
+                return Observable.fromIterable(news);
+            }
+        }).subscribe(mObserverImpl);
+
     }
 
     private void createOperator() {
@@ -108,30 +112,5 @@ class OperatorDoTest implements BaseTest {
 //                Log.d(TAG, "interval Consumer accept : " + aLong);
 //            }
 //        });
-    }
-
-
-    private static class LocalObserver implements Observer<Object> {
-
-
-        @Override
-        public void onSubscribe(Disposable d) {
-
-        }
-
-        @Override
-        public void onNext(Object s) {
-            Log.d(TAG, "onNext " + s.toString());
-        }
-
-        @Override
-        public void onError(Throwable e) {
-
-        }
-
-        @Override
-        public void onComplete() {
-            Log.d(TAG, "onComplete ");
-        }
     }
 }
